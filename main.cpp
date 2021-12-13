@@ -85,8 +85,8 @@ int main(int argc, char* argv[])
             objpoints.push_back(objp);
             imgpoints.push_back(corner_pts);
 
-            cv::imwrite("../sucess/"+std::to_string(frameCount)+".jpg", frame);
-            cv::imwrite("../sucess_ori/"+std::to_string(frameCount)+".jpg", ori);
+            cv::imwrite("../success/"+std::to_string(frameCount)+".jpg", frame);
+            cv::imwrite("../success_ori/"+std::to_string(frameCount)+".jpg", ori);
         }
         cv::imshow("video",frame);
         cv::waitKey(1);
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
     std::vector<cv::String> images;
 
     // Path of the folder containing checkerboard images
-    std::string path = "../sucess_ori/*.jpg";    
+    std::string path = "../success_ori/*.jpg";    
     cv::glob(path, images);
 
     for(size_t i = 0; i < images.size(); i++) {
@@ -166,10 +166,10 @@ int main(int argc, char* argv[])
     cv::Mat OptimalK, map1, map2;
     if (!is_fisheye_model) {   
         OptimalK = cv::getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, ori.size(), true);
-        cv::initUndistortRectifyMap(cameraMatrix, distCoeffs,  cv::Mat::eye(3, 3, CV_32F), OptimalK, ori.size(), CV_16SC2, map1, map2);
+        cv::initUndistortRectifyMap(cameraMatrix, distCoeffs,  cv::Mat(), OptimalK, ori.size(), CV_16SC2, map1, map2);
     } else {
-        cv::fisheye::estimateNewCameraMatrixForUndistortRectify(cameraMatrix, distCoeffs, ori.size(), cv::Mat::eye(3, 3, CV_32F), OptimalK, true);
-        cv::fisheye::initUndistortRectifyMap(cameraMatrix, distCoeffs, cv::Mat::eye(3, 3, CV_32F), OptimalK, ori.size(), CV_16SC2, map1, map2);
+        cv::fisheye::estimateNewCameraMatrixForUndistortRectify(cameraMatrix, distCoeffs, ori.size(), cv::Mat(), OptimalK, true);
+        cv::fisheye::initUndistortRectifyMap(cameraMatrix, distCoeffs, cv::Mat(), OptimalK, ori.size(), CV_16SC2, map1, map2);
     }
     std::cout << "OptimalK = " << OptimalK << std::endl << std::endl;
 
