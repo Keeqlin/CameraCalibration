@@ -8,8 +8,10 @@
 
 // Defining the dimensions of checkerboard
 // int CHECKERBOARD[2]{8,6}; 
-int CHECKERBOARD[2]{6,8}; 
+// int CHECKERBOARD[2]{6,8}; 
 // int CHECKERBOARD[2]{7,7}; 
+// int CHECKERBOARD[2]{10,8}; 
+int CHECKERBOARD[2]{6,8}; 
 
 bool is_fisheye_model = true;
 
@@ -37,24 +39,28 @@ int main(int argc, char* argv[])
     std::vector<cv::Point2f> corner_pts;
     corner_pts.clear();
 
-    // Path of the video containing checkerboard images
-    // cv::VideoCapture cap("/Users/leonlin/Gallopwave/20211104162456_002338AA.MP4");
-    // cv::VideoCapture cap("/Users/leonlin/Gallopwave/20211104162356_002337AA.MP4");
-    // cv::VideoCapture cap("/Users/leonlin/Gallopwave/20211104162656_002340AA.MP4");
-    // cv::VideoCapture cap("/Users/leonlin/Gallopwave/20200101005647_000014AA.MP4");
-    cv::VideoCapture cap("/Users/leonlin/Downloads/Camera Calibration data_20211210/20200102182218_000003AA.MP4");
 
     
     cv::Mat frame, ori, gray;
     int count            = 0;
     int frameCount       = 0;
-    size_t frameInterval = 7;
+    size_t frameInterval = 1;
+
+    std::string videoPath = "/Users/leonlin/Downloads/Camera Calibration data_20211210/20200102182218_000003AA.MP4"; 
+    
+    // Path of the folder containing checkerboard images with postfix of image type
+    std::string imgPath = "/Users/leonlin/Downloads/abeo_AG190C_calib_img/*.png"; 
+
+
+    #ifdef USE_VIDEO
+    // Path of the video containing checkerboard images
+    cv::VideoCapture cap(videoPath);
 
     if (!cap.isOpened()) {
         std::cout << "VideoCapture is not opened" << std::endl;
     }
 
-    #ifdef USE_VIDEO
+
     while (cap.isOpened())
     {   
         if (!cap.read(frame)) break;
@@ -99,9 +105,8 @@ int main(int argc, char* argv[])
     // Extracting path of individual image stored in a given directory
     std::vector<cv::String> images;
 
-    // Path of the folder containing checkerboard images
-    std::string path = "../success_ori/*.jpg";    
-    cv::glob(path, images);
+
+    cv::glob(imgPath, images);
 
     for(size_t i = 0; i < images.size(); i++) {
         frame = cv::imread(images[i]);
@@ -174,15 +179,15 @@ int main(int argc, char* argv[])
     std::cout << "OptimalK = " << OptimalK << std::endl << std::endl;
 
 
-    cv::Mat source = cv::imread("../1634961801400.jpg");
-    if (source.empty()) {
-        std::cout << "source is not found!" << std::endl;
-    } else {
-        cv::Mat undistort, result;
-        cv::remap(source, undistort, map1, map2, cv::INTER_LINEAR, cv::BORDER_CONSTANT);
-        cv::hconcat(source, undistort, result);
-        cv::imshow("calibrated_result", result);
-        cv::waitKey();
-    }
+    // cv::Mat source = cv::imread("../1634961801400.jpg");
+    // if (source.empty()) {
+    //     std::cout << "source is not found!" << std::endl;
+    // } else {
+    //     cv::Mat undistort, result;
+    //     cv::remap(source, undistort, map1, map2, cv::INTER_LINEAR, cv::BORDER_CONSTANT);
+    //     cv::vconcat(source, undistort, result);
+    //     cv::imshow("calibrated_result", result);
+    //     cv::waitKey(0);
+    // }
     return 0;
 }
